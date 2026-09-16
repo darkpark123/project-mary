@@ -1,36 +1,53 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Project Mary
 
-## Getting Started
+**Connecting Christian medical professionals to the mission field.**
 
-First, run the development server:
+There are doctors, nurses, pharmacists, and technicians who want to use their
+training to serve on short-term medical mission trips. There are churches and
+organizations running those trips every month. Today they find each other by
+word of mouth, through a PDF application, or not at all.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+Project Mary is the connective tissue: a verified professional profile a
+clinician builds once — the **Clinician Passport** — and a matching layer
+that puts it in front of the trips that actually need their specialty, on
+the dates they're actually free.
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## What's built (v0)
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+- **Clinician Passport** — credentials (license numbers encrypted at rest),
+  procedure capabilities, languages, availability windows, and service
+  history, built once and reused across every organization.
+- **Trip listings** — searchable by specialty, region, country, cost, and
+  two explicit ethics fields (host-requested? named local partner?), since
+  short-term missions have a real justice critique the platform takes a
+  position on.
+- **Compliance database** — every trip page shows the destination country's
+  clinician registration requirements and estimated lead time, sourced from
+  published research most volunteers and organizations never see.
+- **Pastoral endorsement** — a one-click request to a clinician's sending
+  pastor, confirmed by email — the trust layer secular mission-trip
+  platforms don't have.
+- **Organization tools** — post a trip, see who expressed interest, review
+  the ethics disclosures on your own listing.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+See [`DEPLOY.md`](./DEPLOY.md) for environment setup and deployment, and the
+`/legal` pages in the running app for the current privacy/terms posture —
+they're explicit about what's a draft versus what's been reviewed.
 
-## Learn More
+## Stack
 
-To learn more about Next.js, take a look at the following resources:
+Next.js (App Router, Server Actions) · TypeScript · Tailwind CSS ·
+PostgreSQL via Prisma · NextAuth (credentials) · AES-256-GCM field
+encryption for sensitive Passport data.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Status
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Early v0, not yet handling real user data in production. Known gaps —
+email verification, outbound email, file upload for license/background-check
+documents, and a legal review of the draft policy pages — are being closed
+incrementally; see open issues.
 
-## Deploy on Vercel
+## License
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Not yet chosen — treat this repository as "all rights reserved" until a
+`LICENSE` file is added.

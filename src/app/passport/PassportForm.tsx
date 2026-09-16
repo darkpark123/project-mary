@@ -17,6 +17,7 @@ export type PassportData = {
   willingToLead: boolean;
   regionPrefs: string;
   tripLengthPrefDays: number | null;
+  backgroundCheckStatus: string;
   credentials: Credential[];
   capabilities: Capability[];
   languages: Language[];
@@ -171,6 +172,21 @@ export default function PassportForm({ initial }: { initial: PassportData }) {
             />
             Willing to lead a trip
           </label>
+          <div>
+            <label className={labelCls}>Background check status</label>
+            <select
+              className={inputCls}
+              value={data.backgroundCheckStatus}
+              onChange={(e) => setData({ ...data, backgroundCheckStatus: e.target.value })}
+            >
+              <option value="NOT_STARTED">Not started</option>
+              <option value="PENDING">Pending</option>
+              <option value="CLEARED">Cleared</option>
+            </select>
+            <p className="mt-1 text-xs text-slate-500">
+              Self-reported. Upload supporting evidence under Documents below.
+            </p>
+          </div>
         </div>
       </section>
 

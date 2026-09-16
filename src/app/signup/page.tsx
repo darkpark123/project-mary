@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useActionState } from "react";
 import { signup } from "@/app/actions";
 
@@ -54,6 +55,21 @@ export default function SignupPage() {
             className="mt-1 w-full rounded-md border border-slate-300 px-3 py-2"
           />
         </div>
+
+        <label className="flex items-start gap-2 text-sm text-slate-600">
+          <input type="checkbox" name="termsAccepted" required className="mt-0.5" />
+          <span>
+            I agree to the{" "}
+            <Link href="/legal/terms" className="text-teal-700 underline" target="_blank">
+              Terms
+            </Link>{" "}
+            and{" "}
+            <Link href="/legal/privacy" className="text-teal-700 underline" target="_blank">
+              Privacy Policy
+            </Link>
+            .
+          </span>
+        </label>
 
         {state?.error && <p className="text-sm text-red-600">{state.error}</p>}
 

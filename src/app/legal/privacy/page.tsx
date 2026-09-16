@@ -27,6 +27,11 @@ export default function PrivacyPage() {
           background-check status.
         </li>
         <li>
+          <strong>Uploaded documents:</strong> license scans and background-check evidence you
+          choose to upload, encrypted before storage. See §6 for retention and §9 for what
+          isn't in place yet around these specifically.
+        </li>
+        <li>
           <strong>Endorsement data:</strong> your endorser's (e.g. pastor's) name, email, and
           church affiliation, and their confirmation.
         </li>
@@ -91,10 +96,15 @@ export default function PrivacyPage() {
       <p>
         We retain account and Passport data while your account is active. You can request
         deletion of your account and associated data at any time by emailing{" "}
-        <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a>. Sensitive documents (license
-        scans, background-check evidence) are intended to be encrypted at rest with a written
-        retention schedule before we accept uploads of them in production - that storage layer
-        is not yet built (see §9).
+        <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a>. You can delete an uploaded
+        document yourself at any time from your Passport page.
+      </p>
+      <p>
+        Uploaded license scans and background-check documents are encrypted (AES-256-GCM)
+        before they're stored, and are downloadable only by you, through a server check on
+        every request - never a public link. We do not yet have a fixed retention period for
+        these documents (see §9) or a policy on how long background-check evidence is kept
+        after a check "clears."
       </p>
 
       <h2>7. International users</h2>
@@ -117,13 +127,28 @@ export default function PrivacyPage() {
       <p>Being upfront about the gap between this policy and reality today:</p>
       <ul>
         <li>No attorney has reviewed this policy for any jurisdiction.</li>
-        <li>Encrypted-at-rest storage for uploaded documents is not yet built.</li>
-        <li>No formal data processing agreements exist with any sub-processor.</li>
+        <li>
+          <strong>Background-check documents may trigger consumer-reporting law</strong> (e.g.
+          the US Fair Credit Reporting Act) if they're used to decide whether someone gets
+          placed on a trip - this has specific disclosure, consent, and adverse-action notice
+          requirements we have not implemented and have not had reviewed.
+        </li>
+        <li>
+          Uploaded documents are stored in US-hosted infrastructure by default. For clinicians
+          in the EU/UK, this is a cross-border transfer that has no GDPR transfer mechanism
+          (e.g. Standard Contractual Clauses) in place yet.
+        </li>
+        <li>No fixed retention/deletion schedule for uploaded documents.</li>
+        <li>
+          No formal data processing agreements with sub-processors (currently: Resend for
+          email, Vercel Blob for file storage, our Postgres host).
+        </li>
         <li>No dedicated privacy contact or Data Protection Officer has been appointed.</li>
       </ul>
       <p>
-        Get legal counsel involved before accepting real license scans, background-check
-        documents, or launching to users outside a small trusted pilot group.
+        Get legal counsel involved - specifically on the background-check point above - before
+        relying on uploaded documents for any real placement decision, or launching beyond a
+        small trusted pilot group.
       </p>
 
       <h2>10. Your rights</h2>

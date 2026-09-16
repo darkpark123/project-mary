@@ -30,3 +30,22 @@ export function decryptField(ciphertext: string): string {
   decipher.setAuthTag(authTag);
   return Buffer.concat([decipher.update(data), decipher.final()]).toString("utf8");
 }
+
+// Binary variants for uploaded files (license scans, background-check
+// documents) - same cipher, no base64/string detour. Layout: 12-byte IV +
+// 16-byte auth tag + ciphertext, all concatenated.
+export function encryptBuffer(plaintext: Buffer): Buffer {
+  const iv = randomBytes(12);
+  const cipher = createCipheriv("aes-256-gcm", getKey(), iv);
+  const encrypted = Buffer.concat([cipher.update(plaintext), cipher.final()]);
+  return Buffer.concat([iv, cipher.getAuthTag(), encrypted]);
+}
+
+export function decryptBuffer(blob: Buffer): Buffer {
+  const iv = blob.subarray(0, 12);
+  const authTag = blob.subarray(12, 28);
+  const data = blob.subarray(28);
+  const decipher = createDecipheriv("aes-256-gcm", getKey(), iv);
+  decipher.setAuthTag(authTag);
+  return Buffer.concat([decipher.update(data), decipher.final()]);
+}

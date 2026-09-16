@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { requireUser } from "@/lib/session";
 import { db } from "@/lib/db";
+import EmailVerifiedBanner from "@/components/EmailVerifiedBanner";
 
 export default async function OrgTripsPage() {
   const user = await requireUser("ORG_ADMIN");
@@ -8,6 +9,7 @@ export default async function OrgTripsPage() {
   const org = await db.organization.findUniqueOrThrow({
     where: { adminUserId: user.id },
     include: {
+      admin: { select: { emailVerifiedAt: true } },
       trips: {
         include: { roleNeeds: true, interests: { include: { profile: { include: { user: true } } } } },
         orderBy: { startDate: "asc" },
@@ -26,6 +28,8 @@ export default async function OrgTripsPage() {
           Post a trip
         </Link>
       </div>
+
+      <EmailVerifiedBanner verified={!!org.admin.emailVerifiedAt} action="post a trip" />
 
       {org.trips.length === 0 && <p className="text-sm text-slate-500">No trips posted yet.</p>}
 

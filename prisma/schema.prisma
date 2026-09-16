@@ -12,14 +12,26 @@ datasource db {
 // src/lib/validation.ts instead.
 
 model User {
-  id           String   @id @default(cuid())
-  email        String   @unique
-  passwordHash String
-  role         String // "CLINICIAN" | "ORG_ADMIN"
-  createdAt    DateTime @default(now())
+  id              String    @id @default(cuid())
+  email           String    @unique
+  passwordHash    String
+  role            String // "CLINICIAN" | "ORG_ADMIN"
+  emailVerifiedAt DateTime?
+  termsAcceptedAt DateTime?
+  createdAt       DateTime  @default(now())
 
-  clinicianProfile ClinicianProfile?
-  organization     Organization?
+  clinicianProfile   ClinicianProfile?
+  organization       Organization?
+  verificationTokens EmailVerificationToken[]
+}
+
+model EmailVerificationToken {
+  id        String   @id @default(cuid())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    String
+  token     String   @unique
+  expiresAt DateTime
+  createdAt DateTime @default(now())
 }
 
 model ClinicianProfile {
@@ -44,6 +56,21 @@ model ClinicianProfile {
   endorsements  Endorsement[]
   serviceRecords ServiceRecord[]
   interests     Interest[]
+  documents     Document[]
+}
+
+model Document {
+  id               String   @id @default(cuid())
+  profile          ClinicianProfile @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  profileId        String
+  kind             String   // "LICENSE" | "BACKGROUND_CHECK"
+  label            String   @default("") // e.g. which country/credential this is for
+  storageBackend   String   // "blob" | "local"
+  storageKey       String   // Vercel Blob URL, or local path under .uploads/
+  originalFilename String
+  mimeType         String
+  sizeBytes        Int
+  uploadedAt       DateTime @default(now())
 }
 
 model Credential {

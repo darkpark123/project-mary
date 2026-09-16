@@ -5,7 +5,16 @@ export const signupSchema = z.object({
   password: z.string().min(8, "Password must be at least 8 characters"),
   role: z.enum(["CLINICIAN", "ORG_ADMIN"]),
   name: z.string().min(1, "Name is required"),
+  termsAccepted: z.literal("on", { message: "You must accept the Terms and Privacy Policy" }),
 });
+
+export const documentUploadSchema = z.object({
+  kind: z.enum(["LICENSE", "BACKGROUND_CHECK"]),
+  label: z.string().default(""),
+});
+
+export const ALLOWED_DOCUMENT_TYPES = ["application/pdf", "image/jpeg", "image/png"];
+export const MAX_DOCUMENT_BYTES = 10 * 1024 * 1024; // 10MB
 
 export const credentialSchema = z.object({
   licenseNumber: z.string().min(1),
@@ -58,6 +67,7 @@ export const profileUpdateSchema = z.object({
   willingToLead: z.boolean().default(false),
   regionPrefs: z.string().default(""),
   tripLengthPrefDays: z.coerce.number().int().min(0).nullable().optional(),
+  backgroundCheckStatus: z.enum(["NOT_STARTED", "PENDING", "CLEARED"]).default("NOT_STARTED"),
   // Nested collections validated here too (not just the flat profile fields) -
   // these go straight into Prisma createMany in the server action, so an
   // empty date or blank required field must be caught before it gets there.

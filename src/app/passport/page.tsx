@@ -1,8 +1,10 @@
 import { requireUser } from "@/lib/session";
 import { db } from "@/lib/db";
 import { decryptField } from "@/lib/crypto";
+import EmailVerifiedBanner from "@/components/EmailVerifiedBanner";
 import PassportForm, { type PassportData } from "./PassportForm";
 import EndorsementForm from "./EndorsementForm";
+import DocumentsSection from "./DocumentsSection";
 
 function toDateInput(d: Date) {
   return d.toISOString().slice(0, 10);
@@ -13,7 +15,16 @@ export default async function PassportPage() {
 
   const profile = await db.clinicianProfile.findUniqueOrThrow({
     where: { userId: user.id },
-    include: { credentials: true, capabilities: true, languages: true, availability: true, serviceRecords: true, endorsements: true },
+    include: {
+      credentials: true,
+      capabilities: true,
+      languages: true,
+      availability: true,
+      serviceRecords: true,
+      endorsements: true,
+      documents: true,
+      user: { select: { emailVerifiedAt: true } },
+    },
   });
 
   const initial: PassportData = {
@@ -24,6 +35,7 @@ export default async function PassportPage() {
     willingToLead: profile.willingToLead,
     regionPrefs: profile.regionPrefs,
     tripLengthPrefDays: profile.tripLengthPrefDays,
+    backgroundCheckStatus: profile.backgroundCheckStatus,
     credentials: profile.credentials.map(({ licenseNumber, issuingBody, country, specialty }) => ({
       licenseNumber: decryptField(licenseNumber),
       issuingBody,
@@ -48,16 +60,22 @@ export default async function PassportPage() {
 
   return (
     <div className="space-y-10">
-      <div>
+      <div className="space-y-3">
         <h1 className="text-2xl font-bold text-slate-900">Your Clinician Passport</h1>
-        <p className="mt-1 text-sm text-slate-600">
+        <p className="text-sm text-slate-600">
           Verification status:{" "}
           <span className="font-medium">{profile.verificationStatus}</span>
           {profile.verificationStatus === "PENDING" && " - reviewed manually while we're small."}
         </p>
+        <EmailVerifiedBanner
+          verified={!!profile.user.emailVerifiedAt}
+          action="request a pastoral endorsement"
+        />
       </div>
 
       <PassportForm initial={initial} />
+
+      <DocumentsSection documents={profile.documents} />
 
       <section className="space-y-3 border-t border-slate-200 pt-8">
         <h2 className="text-lg font-semibold text-slate-900">Pastor / church endorsement</h2>

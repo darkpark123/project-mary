@@ -14,7 +14,7 @@ export default function TermsPage() {
         <strong>Draft notice:</strong> this is a starting template, not a document reviewed by
         an attorney. {SITE_NAME} has not yet had counsel review these terms. Do not treat this
         page as legal advice, and do not rely on it as a finished, binding contract until a
-        lawyer has reviewed it - see §12.
+        lawyer has reviewed it - see §13.
       </div>
 
       <h2>1. What {SITE_NAME} is</h2>
@@ -83,7 +83,19 @@ export default function TermsPage() {
         deciding what checks to require before placing a Clinician with vulnerable populations.
       </p>
 
-      <h2>8. Acceptable use</h2>
+      <h2>8. Uploaded documents</h2>
+      <p>
+        You may upload license scans and background-check documents to your Passport. We
+        encrypt these before storage and never link to them publicly, but {SITE_NAME} is{" "}
+        <strong>not a consumer reporting agency</strong> and does not verify, generate, or
+        vouch for the contents of anything you upload. If a background-check document is used
+        to decide whether you're placed on a trip, consumer-reporting law in your jurisdiction
+        (e.g. the US Fair Credit Reporting Act) may apply to that decision independently of
+        anything in these Terms - {SITE_NAME} takes no position on and accepts no liability
+        for how an Organization uses a document you share with them.
+      </p>
+
+      <h2>9. Acceptable use</h2>
       <p>You agree not to:</p>
       <ul>
         <li>submit false credentials, identity information, or trip details,</li>
@@ -92,32 +104,32 @@ export default function TermsPage() {
         <li>use the platform for any unlawful purpose.</li>
       </ul>
 
-      <h2>9. Fees</h2>
+      <h2>10. Fees</h2>
       <p>
         Clinician accounts are free. {SITE_NAME} may charge Organizations for posting or
         access in the future; any such fees will be disclosed before they apply.
       </p>
 
-      <h2>10. Termination</h2>
+      <h2>11. Termination</h2>
       <p>
         {SITE_NAME} may suspend or remove an account that violates these terms, submits
         fraudulent information, or creates a safety risk to other users.
       </p>
 
-      <h2>11. Governing law</h2>
+      <h2>12. Governing law</h2>
       <p>
         Because {SITE_NAME} serves clinicians and organizations globally, governing law and
         dispute resolution terms are not yet finalized. This section will be completed once
-        legal counsel has been engaged - see §12.
+        legal counsel has been engaged - see §13.
       </p>
 
-      <h2>12. Changes to these terms</h2>
+      <h2>13. Changes to these terms</h2>
       <p>
         These terms are a working draft and will change, likely substantially, once reviewed
         by an attorney. Material changes will be posted here with an updated date.
       </p>
 
-      <h2>13. Contact</h2>
+      <h2>14. Contact</h2>
       <p>
         Questions about these terms:{" "}
         <a href={`mailto:${CONTACT_EMAIL}`} className="text-teal-700 underline">

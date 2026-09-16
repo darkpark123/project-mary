@@ -3,7 +3,7 @@
 import { useActionState } from "react";
 import { requestEndorsement } from "@/app/actions";
 
-type State = { error?: string; link?: string };
+type State = { error?: string; link?: string; sent?: boolean };
 
 export default function EndorsementForm() {
   const [state, formAction, pending] = useActionState<State, FormData>(
@@ -49,8 +49,11 @@ export default function EndorsementForm() {
         {state?.error && <p className="mt-2 text-sm text-red-600">{state.error}</p>}
         {state?.link && (
           <p className="mt-2 text-sm text-slate-600">
-            No email service is wired up yet - send this confirmation link to your pastor
-            yourself:{" "}
+            {state.sent ? (
+              <>Sent to your pastor. If it doesn&apos;t arrive, here&apos;s the link to forward yourself:</>
+            ) : (
+              <>No email service is configured yet - send this confirmation link to your pastor yourself:</>
+            )}{" "}
             <code className="rounded bg-slate-100 px-1 py-0.5">{state.link}</code>
           </p>
         )}
