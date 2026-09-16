@@ -1,0 +1,175 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// Roles, statuses etc. are plain strings rather than Prisma enums, so a
+// value doesn't need a migration to change — validated at the boundary in
+// src/lib/validation.ts instead.
+
+model User {
+  id           String   @id @default(cuid())
+  email        String   @unique
+  passwordHash String
+  role         String // "CLINICIAN" | "ORG_ADMIN"
+  createdAt    DateTime @default(now())
+
+  clinicianProfile ClinicianProfile?
+  organization     Organization?
+}
+
+model ClinicianProfile {
+  id                String   @id @default(cuid())
+  user              User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId            String   @unique
+  fullName          String
+  specialty         String
+  yearsInPractice   Int
+  verificationStatus String  @default("PENDING") // PENDING | VERIFIED | REJECTED
+  bio               String   @default("")
+  willingToLead     Boolean  @default(false)
+  regionPrefs       String   @default("") // comma-separated
+  tripLengthPrefDays Int?
+  backgroundCheckStatus String @default("NOT_STARTED") // NOT_STARTED | PENDING | CLEARED
+  createdAt         DateTime @default(now())
+
+  credentials   Credential[]
+  capabilities  Capability[]
+  languages     Language[]
+  availability  AvailabilityWindow[]
+  endorsements  Endorsement[]
+  serviceRecords ServiceRecord[]
+  interests     Interest[]
+}
+
+model Credential {
+  id         String   @id @default(cuid())
+  profile    ClinicianProfile @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  profileId  String
+  licenseNumber String
+  issuingBody   String
+  country       String
+  specialty     String
+  verifiedAt    DateTime?
+  verifier      String?
+}
+
+model Capability {
+  id        String   @id @default(cuid())
+  profile   ClinicianProfile @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  profileId String
+  name      String
+  lowResourceCompetent Boolean @default(false)
+}
+
+model Language {
+  id           String @id @default(cuid())
+  profile      ClinicianProfile @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  profileId    String
+  language     String
+  proficiency  String // BASIC | CONVERSATIONAL | FLUENT | NATIVE
+}
+
+model AvailabilityWindow {
+  id          String   @id @default(cuid())
+  profile     ClinicianProfile @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  profileId   String
+  startDate   DateTime
+  endDate     DateTime
+  flexible    Boolean  @default(false)
+}
+
+model Endorsement {
+  id           String    @id @default(cuid())
+  profile      ClinicianProfile @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  profileId    String
+  endorserName  String
+  endorserEmail String
+  church        String
+  relationship  String
+  token         String    @unique
+  confirmedAt   DateTime?
+  createdAt     DateTime  @default(now())
+}
+
+model ServiceRecord {
+  id              String   @id @default(cuid())
+  profile         ClinicianProfile @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  profileId       String
+  tripName        String
+  role            String
+  startDate       DateTime
+  endDate         DateTime
+  leaderReference String   @default("")
+}
+
+model Organization {
+  id                 String   @id @default(cuid())
+  admin              User     @relation(fields: [adminUserId], references: [id], onDelete: Cascade)
+  adminUserId        String   @unique
+  name               String
+  denomination       String   @default("")
+  verificationStatus String   @default("PENDING") // PENDING | VERIFIED
+  createdAt          DateTime @default(now())
+
+  trips Trip[]
+}
+
+model Trip {
+  id                 String   @id @default(cuid())
+  organization       Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  organizationId     String
+  country            String
+  region             String   @default("")
+  hostSiteName       String   @default("")
+  startDate          DateTime
+  endDate            DateTime
+  costToVolunteerUsd Int      @default(0)
+  malpracticeCovered Boolean  @default(false)
+  hostRequested      Boolean  @default(false)
+  localPartnerNamed  Boolean  @default(false)
+  continuityPlan     String   @default("")
+  description        String   @default("")
+  createdAt          DateTime @default(now())
+
+  roleNeeds  RoleNeed[]
+  interests  Interest[]
+}
+
+model RoleNeed {
+  id                 String @id @default(cuid())
+  trip               Trip   @relation(fields: [tripId], references: [id], onDelete: Cascade)
+  tripId             String
+  specialty          String
+  count              Int
+  filledCount        Int    @default(0)
+  scopeOfPracticeNotes String @default("")
+}
+
+model Interest {
+  id         String   @id @default(cuid())
+  trip       Trip     @relation(fields: [tripId], references: [id], onDelete: Cascade)
+  tripId     String
+  profile    ClinicianProfile @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  profileId  String
+  status     String   @default("SENT") // SENT
+  createdAt  DateTime @default(now())
+
+  @@unique([tripId, profileId])
+}
+
+model CountryRequirement {
+  id                    String    @id @default(cuid())
+  country               String    @unique
+  registeringBody       String
+  url                   String    @default("")
+  documentsRequired     Json
+  typicalLeadTimeWeeks  Int
+  facilityRestriction   String    @default("")
+  lastVerifiedAt        DateTime?
+  verifiedBy            String    @default("")
+}
